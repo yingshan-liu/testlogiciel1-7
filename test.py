@@ -28,21 +28,21 @@ class TestDB(unittest.TestCase):
  
 	def test_2_add_user(self):
 		add_user(db_path,'yann.c',0,0,'password')
-		sql = "select user_name from Users where user_name = 'user_name';"
+		sql = "select user_name from Users where user_name = 'yann.c';"
 		name = ''
 		for row in c.execute(sql):
 			name = row[0]
 		self.assertEqual(name,'')
 
 		add_user(db_path,'yann.c',0,0,'password0')
-		sql = "select user_name from Users where user_name = 'user_name';"
+		sql = "select user_name from Users where user_name = 'yann.c';"
 		name = ''
 		for row in c.execute(sql):
 			name = row[0]
 		self.assertEqual(name,'')
 
 		add_user(db_path,'yann.c',0,0,'password.')
-		sql = "select user_name from Users where user_name = 'user_name';"
+		sql = "select user_name from Users where user_name = 'yann.c';"
 		name = ''
 		for row in c.execute(sql):
 			name = row[0]
@@ -69,26 +69,29 @@ class TestDB(unittest.TestCase):
 	
 
 	def test_5_add_room(self):
+
+
+		add_room(db_path,'room1','public')
+		sql = "select room_name from Rooms where room_name = 'room1';"
+		for row in c.execute(sql):
+			room_name = row[0]
+		self.assertEqual(room_name,'room1')
+
 		add_room(db_path,'room0','unknown')
-		sql = "select room_name from Rooms where room_name = 'room_name';"
+		sql = "select room_name from Rooms where room_name = 'room0';"
 		res = ''
 		for row in c.execute(sql):
 			res = row[0]
 		self.assertEqual(res,'')
 
-		add_room(db_path,'room0','public')
-		sql = "select room_name from Rooms where room_name = 'room0';"
-		for row in c.execute(sql):
-			room_name = row[0]
-		self.assertEqual(room_name,'room0')
 
 
 	def test_6_get_rooms(self):
-		self.assertEqual(get_rooms(db_path),['room0'])
+		self.assertEqual(get_rooms(db_path),['room1'])
 
 	def test_7_delete_room(self):
-		delete_user(db_path,'room0')
-		sql = "select room_name from Rooms where room_name = 'room_name';"
+		delete_room(db_path,'room1')
+		sql = "select room_name from Rooms where room_name = 'room1';"
 		none = ''
 		for row in c.execute(sql):
 			none = row[0]
