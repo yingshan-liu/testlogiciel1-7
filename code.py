@@ -12,12 +12,17 @@ def get_rooms(db_path):
 
 	return rooms
 
+def verify_room(room_type):
+	if room_type == 'public' or room_type == 'private':
+		return True
+	return False
 
 def add_room(db_path, room_name, room_type):
 	connect = sqlite3.connect(db_path)
 	cursor = connect.cursor()
 
-	if room_type == 'public' or room_type == 'private':
+	#if room_type == 'public' or room_type == 'private':
+	if verify_room(room_type) :
 		sql = 'INSERT INTO Rooms (room_name,room_type) VALUES (?,?)'
 
 		cursor.execute(sql,(room_name, room_type))
@@ -46,10 +51,7 @@ def get_users(db_path):
 
 	return users
 
-
-def add_user(db_path, user_name, user_role, user_rights, user_password):
-	connect = sqlite3.connect(db_path)
-	cursor = connect.cursor()
+def verify_password(user_password):
 	have_number = 0
 	have_special = 0
 	for i in user_password:
@@ -59,6 +61,24 @@ def add_user(db_path, user_name, user_role, user_rights, user_password):
 			have_special = 1
 
 	if len(user_password)>8 and have_number ==1 and have_special ==1:
+		return True
+	return False
+
+def add_user(db_path, user_name, user_role, user_rights, user_password):
+	connect = sqlite3.connect(db_path)
+	cursor = connect.cursor()
+	"""
+	have_number = 0
+	have_special = 0
+	for i in user_password:
+		if i.isdigit():
+			have_number = 1
+		if (not i.isdigit()) and (not i.isupper())  and (not i.islower()):
+			have_special = 1
+
+	if len(user_password)>8 and have_number ==1 and have_special ==1:
+	"""
+	if verify_password(user_password):
 		sql = 'INSERT INTO Users (user_name, user_role, user_rights, user_password) VALUES (?,?,?,?)'
 
 		cursor.execute(sql,(user_name, user_role, user_rights, user_password))
