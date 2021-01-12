@@ -67,17 +67,7 @@ def verify_password(user_password):
 def add_user(db_path, user_name, user_role, user_rights, user_password):
 	connect = sqlite3.connect(db_path)
 	cursor = connect.cursor()
-	"""
-	have_number = 0
-	have_special = 0
-	for i in user_password:
-		if i.isdigit():
-			have_number = 1
-		if (not i.isdigit()) and (not i.isupper())  and (not i.islower()):
-			have_special = 1
 
-	if len(user_password)>8 and have_number ==1 and have_special ==1:
-	"""
 	if verify_password(user_password):
 		sql = 'INSERT INTO Users (user_name, user_role, user_rights, user_password) VALUES (?,?,?,?)'
 
@@ -93,6 +83,27 @@ def delete_user(db_path, user_name):
 
 	cursor.execute(sql,(user_name,))
 	connect.commit()
+def verify_username(db_path,user_name):
+
+	#users = get_users(db_path)
+	connect = sqlite3.connect(db_path)
+	cursor = connect.cursor()
+
+	sql = 'SELECT user_name FROM Users;'
+
+	users = cursor.execute(sql ).fetchall()
+
+	users = [user[0] for user in users]
+	
+	badName = '$%*+,-./:!"#&\'();[]|=><?~_0123456789'
+	if any(spc in badName for spc in user_name):
+		return False
+	
+	for name in users:
+		if user_name == name:
+			return False
+
+	return True
 
 def create_db(db_path):
 	connect = sqlite3.connect(db_path)
@@ -103,4 +114,6 @@ def create_db(db_path):
 	cursor.execute('CREATE TABLE Users ([id_user] INTEGER PRIMARY KEY,[user_name] text UNIQUE, [user_role] integer, [user_rights] integer, [user_password] text)')
 
 	connect.commit()
+
+
 
